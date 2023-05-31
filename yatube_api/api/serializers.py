@@ -2,13 +2,7 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import CurrentUserDefault
 
-
-from posts.models import (Comment,
-                          Group,
-                          Follow,
-                          Post,
-                          User,
-                          )
+from posts import models
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -18,7 +12,7 @@ class PostSerializer(serializers.ModelSerializer):
                               )
 
     class Meta:
-        model = Post
+        model = models.Post
         fields = (
             'id', 'text', 'author', 'image', 'group', 'pub_date', 'comments'
         )
@@ -34,7 +28,7 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Comment
+        model = models.Comment
         fields = ('id', 'text', 'author', 'created', 'post')
         read_only_fields = ('id', 'author', 'created', 'post')
 
@@ -43,13 +37,13 @@ class GroupSerializer(serializers.ModelSerializer):
     '''Серилизатор групп. '''
 
     class Meta:
-        model = Group
+        model = models.Group
         fields = ('id', 'title', 'slug', 'description')
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = models.User
         fields = ('id', 'username', 'password')
 
 
@@ -63,15 +57,15 @@ class FollowSerializer(serializers.ModelSerializer):
     following = serializers.SlugRelatedField(
         slug_field='username',
         read_only=False,
-        queryset=User.objects.all(),
+        queryset=models.User.objects.all(),
     )
 
     class Meta:
-        model = Follow
+        model = models.Follow
         fields = ('id', 'user', 'following')
         validators = (
             serializers.UniqueTogetherValidator(
-                queryset=Follow.objects.all(),
+                queryset=models.Follow.objects.all(),
                 fields=('user', 'following'),
                 message='Вы уже подписаны на данного автора!',
             ),
