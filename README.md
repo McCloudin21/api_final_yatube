@@ -1,138 +1,188 @@
-# API для Yatube
-
-[![Python](https://img.shields.io/badge/-Python-464641?style=flat-square&logo=Python)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/Django-464646?style=flat-square&logo=django)](https://www.djangoproject.com/)
-[![Pytest](https://img.shields.io/badge/Pytest-464646?style=flat-square&logo=pytest)](https://docs.pytest.org/en/6.2.x/)
-[![Postman](https://img.shields.io/badge/Postman-464646?style=flat-square&logo=postman)](https://www.postman.com/)
+# ЯП - Спринт 9 - Проект «API для Yatube». Python-разработчик (бекенд) (Яндекс.Практикум)
 
 ## Описание
 
-Яндекс Практикум. Спринт 9. Итоговый проект. API для Yatube.
+API для Yatub представляет собой проект социальной сети в которой реализованы следующие возможности, 
+публиковать записи, комментировать записи, а так же подписываться или отписываться от авторов.
 
-## Функционал
+## Стек технологий
 
-- Подписка и отписка от авторизованного пользователя;
-- Авторизованный пользователь просматривает посты, создавёт новые, удаляет и изменяет их;
-- Просмотр сообществ;
-- Комментирование, просмотр, удаление и обновление комментариев;
-- Фльтрация по полям.
+* Python 3.11,
+* Django 4.2,
+* DRF,
+* JWT + Djoser
 
-## Установка
+## Запуск проекта в dev-режиме
 
-1. Клонировать репозиторий:
+- Клонировать репозиторий и перейти в него в командной строке.
+- Установите и активируйте виртуальное окружение c учетом версии Python 3.7 (выбираем python не ниже 3.7):
 
-   ```python
-   git clone https://github.com/egorcoders/api_final_yatube.git
-   ```
-
-2. Перейти в папку с проектом:
-
-   ```python
-   cd api_final_yatube/
-   ```
-
-3. Установить виртуальное окружение для проекта:
-
-   ```python
-   python -m venv venv
-   ```
-
-4. Активировать виртуальное окружение для проекта:
-
-   ```python
-   # для OS Lunix и MacOS
-   source venv/bin/activate
-
-   # для OS Windows
-   source venv/Scripts/activate
-   ```
-
-5. Установить зависимости:
-
-   ```python
-   python3 -m pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
-
-6. Выполнить миграции на уровне проекта:
-
-   ```python
-   cd yatube
-   python3 manage.py makemigrations
-   python3 manage.py migrate
-   ```
-
-7. Запустить проект:
-
-   `python manage.py runserver`
-
-## Примеры запросов
-
-Получение токена
-
-Отправить POST-запрос на адрес `api/v1/jwt/create/` и передать 2 поля в `data`:
-
-1. `username` - имя пользователя.
-2. `password` - пароль пользователя.
-
-Создание поста
-
-Отправить POST-запрос на адрес `api/v1/posts/` и передать обязательное поле `text`, в заголовке указать `Authorization`:`Bearer <токен>`.
-
-1. Пример запроса:
-
-   ```json
-   {
-     "text": "Мой первый пост."
-   }
-   ```
-
-2. Пример ответа:
-
-   ```json
-   {
-     "id": 2,
-     "author": "Dmitrii",
-     "text": "Мой первый пост.",
-     "pub_date": "2022-04-22T12:00:22.021094Z",
-     "image": null,
-     "group": null
-   }
-   ```
-
-Комментирование поста пользователя
-
-Отправить POST-запрос на адрес `api/v1/posts/{post_id}/comments/` и передать обязательные поля `post` и `text`, в заголовке указать `Authorization`:`Bearer <токен>`.
-
-1. Пример запроса:
-
-   ```json
-   {
-     "post": 1,
-     "text": "Тест"
-   }
-   ```
-
-2. Пример ответа:
-
-   ```json
-   {
-     "id": 1,
-     "author": "Dmitrii",
-     "text": "Тест",
-     "created": "2022-04-22T12:06:13.146875Z",
-     "post": 1
-   }
-   ```
-
-## Ресурсы
-
-```python
-# Документаия проекта
-http://127.0.0.1:8000/redoc/
+```bash
+python -m venv venv
 ```
 
-```python
-# ПО для тестирования API, Postman
-https://www.postman.com/
+```bash
+source venv/Scripts/activate
 ```
+
+```bash
+python -m pip install --upgrade pip
+```
+
+- Затем нужно установить все зависимости из файла requirements.txt
+
+```bash
+cd yatube_api
+```
+
+```bash
+pip install -r requirements.txt
+```
+
+- Выполняем миграции:
+
+```bash
+python manage.py migrate
+```
+
+- Создаем суперпользователя:
+
+```bash
+python manage.py createsuperuser
+```
+
+- Запускаем проект:
+
+```bash
+python manage.py runserver
+```
+
+## Примеры работы с API для всех пользователей
+
+Для неавторизованных пользователей работа с API доступна в режиме чтения, что-либо изменить или создать не получится.
+
+```r
+GET api/v1/posts/ - получить список всех публикаций.
+При указании параметров limit и offset выдача должна работать с пагинацией
+GET api/v1/posts/{id}/ - получение публикации по id
+GET api/v1/groups/ - получение списка доступных сообществ
+GET api/v1/groups/{id}/ - получение информации о сообществе по id
+GET api/v1/{post_id}/comments/ - получение всех комментариев к публикации
+GET api/v1/{post_id}/comments/{id}/ - Получение комментария к публикации по id
+```
+
+## Примеры работы с API для авторизованных пользователей
+
+- Для создания публикации используем:
+
+```r
+POST /api/v1/posts/
+```
+
+в body
+
+```json
+{
+"text": "string",
+"image": "string",
+"group": 0
+}
+```
+
+- Обновление публикации:
+
+```r
+PUT /api/v1/posts/{id}/
+```
+
+в body
+
+```json
+{
+"text": "string",
+"image": "string",
+"group": 0
+}
+```
+
+- Частичное обновление публикации:
+
+```r
+PATCH /api/v1/posts/{id}/
+```
+
+в body
+
+```json
+{
+"text": "string",
+"image": "string",
+"group": 0
+}
+```
+
+- Частичное обновление публикации:
+
+```r
+DEL /api/v1/posts/{id}/
+```
+
+Получение доступа к эндпоинту /api/v1/follow/ (подписки) доступен только для авторизованных пользователей.
+
+подписка пользователя от имени которого сделан запрос на пользователя переданного в теле запроса. Анонимные запросы запрещены.
+
+```r
+GET /api/v1/follow/
+```
+
+- Авторизованные пользователи могут создавать посты, комментировать их и подписываться на других пользователей.
+- Пользователи могут изменять(удалять) контент, автором которого они являются.
+
+## Добавить группу в проект нужно через админ панель Django:
+
+после авторизации, переходим в раздел Groups и создаем группы.
+
+```r
+admin/
+```
+
+- Доступ авторизованным пользователем доступен по JWT-токену (Joser), который можно получить выполнив POST запрос по адресу:
+
+```r
+POST /api/v1/jwt/create/
+```
+
+- Передав в body данные пользователя (например в postman):
+
+```json
+{
+"username": "string",
+"password": "string"
+}
+```
+
+- Полученный токен добавляем в headers (postman), после чего буду доступны все функции проекта:
+
+```r
+Authorization: Bearer {your_token}
+```
+
+- Обновить JWT-токен:
+
+```r
+POST /api/v1/jwt/refresh/
+```
+
+- Проверить JWT-токен:
+
+```r
+POST /api/v1/jwt/verify/
+```
+
+- Так же в проекте API реализована пагинация (LimitOffsetPagination):
+
+```r
+GET /api/v1/posts/?limit=5&offset=0
+```
+
+Автор: [Сергей Андреев](https://github.com/McCloudin21) :+1:
